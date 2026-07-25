@@ -13,7 +13,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-          TalentHotline connects rural and peri-urban artists, comedians, dancers, and creators directly with industry recruiters using Africa’s Talking SMS, Voice, and USSD technology.
+          CreatorConnect connects rural and peri-urban artists, comedians, dancers, and creators directly with industry recruiters using Africa’s Talking SMS, Voice, and USSD technology.
         </p>
 
         {/* Action Buttons */}
@@ -54,7 +54,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 py-6 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} TalentHotline Kampala. Powered by Africa’s Talking APIs & Supabase.
+        © {new Date().getFullYear()} CreatorConnect Kampala. Powered by Africa’s Talking APIs & Supabase.
       </footer>
     </main>
   );

@@ -82,7 +82,7 @@ export default function CreatorSubmission() {
 
       setStatus({
         loading: false,
-        message: `All done! Account created (ID: ${regData.contestantNumber}). Your submission is live on the dashboard.`,
+        message: regData.message || `Account created. Your contestant number is ${regData.contestantNumber}.`,
         error: false,
       });
 

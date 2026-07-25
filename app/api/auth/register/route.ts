@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       await sendSMS([cleanPhone], message);
       smsSent = true;
     } catch (smsErr) {
-      console.error("SMS failed (account still created):", smsErr);
+      console.error("SMS failed:", smsErr instanceof Error ? smsErr.message : smsErr);
     }
 
     return NextResponse.json({
