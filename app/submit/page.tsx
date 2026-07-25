@@ -30,6 +30,8 @@ export default function CreatorSubmission() {
     setStatus({ loading: true, message: 'Uploading media file & registering...', error: false });
 
     try {
+      const cleanPhone = formData.phone_number.replace(/[\s\-+]/g, '');
+
       // 1. Upload actual file to Supabase Storage Bucket
       setStatus({ loading: true, message: 'Step 1/3: Uploading file...', error: false });
       const fileExt = file.name.split('.').pop();
@@ -55,7 +57,7 @@ export default function CreatorSubmission() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: formData.username,
-          phone_number: formData.phone_number,
+          phone_number: cleanPhone,
         }),
       });
       const regData = await regRes.json();
@@ -67,7 +69,7 @@ export default function CreatorSubmission() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          artist_phone: formData.phone_number,
+          artist_phone: cleanPhone,
           username: formData.username,
           category: formData.category,
           media_type: formData.media_type,

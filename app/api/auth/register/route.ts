@@ -14,10 +14,12 @@ export async function POST(req: Request) {
       );
     }
 
+    const cleanPhone = phone_number.replace(/[\s\-+]/g, '');
+
     const { data: existing, error: checkError } = await supabase
       .from("users")
       .select("id")
-      .eq("phone_number", phone_number)
+      .eq("phone_number", cleanPhone)
       .single();
 
     if (checkError && checkError.code !== "PGRST116") {
@@ -40,7 +42,7 @@ export async function POST(req: Request) {
       .from("users")
       .insert({
         username,
-        phone_number,
+        phone_number: cleanPhone,
         unique_id: contestantNumber,
       })
       .select("id, unique_id")
@@ -58,7 +60,7 @@ export async function POST(req: Request) {
 
     let smsSent = false;
     try {
-      await sendSMS([phone_number], message);
+      await sendSMS([cleanPhone], message);
       smsSent = true;
     } catch (smsErr) {
       console.error("SMS failed (account still created):", smsErr);
