@@ -9,20 +9,27 @@ export async function POST(req: Request) {
 
     if (!phone_number || !username) {
       return NextResponse.json(
-        { error: "Phone and name are required" },
+        { error: "Phone number and name are required." },
         { status: 400 }
       );
     }
 
-    const { data: existing } = await supabase
+    const { data: existing, error: checkError } = await supabase
       .from("users")
       .select("id")
       .eq("phone_number", phone_number)
       .single();
 
+    if (checkError && checkError.code !== "PGRST116") {
+      return NextResponse.json(
+        { error: `Could not verify phone number: ${checkError.message}` },
+        { status: 500 }
+      );
+    }
+
     if (existing) {
       return NextResponse.json(
-        { error: "Phone number already registered" },
+        { error: "This phone number is already registered." },
         { status: 409 }
       );
     }
@@ -40,24 +47,36 @@ export async function POST(req: Request) {
       .single();
 
     if (insertError) {
-      console.error("Insert error:", insertError);
-      throw insertError;
+      return NextResponse.json(
+        { error: `Could not create account: ${insertError.message}` },
+        { status: 500 }
+      );
     }
 
     const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/login`;
     const message = `Welcome to CreatorConnect, ${username}! Your contestant number is ${contestantNumber}. Use this to login at ${loginUrl}`;
 
-    await sendSMS([phone_number], message);
+    let smsSent = false;
+    try {
+      await sendSMS([phone_number], message);
+      smsSent = true;
+    } catch (smsErr) {
+      console.error("SMS failed (account still created):", smsErr);
+    }
 
     return NextResponse.json({
       success: true,
       contestantNumber: user.unique_id,
-      message: "Account created. SMS sent with login credentials.",
+      smsSent,
+      message: smsSent
+        ? "Account created. SMS sent with your contestant number."
+        : `Account created. SMS failed to send. Your contestant number is ${contestantNumber}.`,
     });
   } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Registration error:", err);
     return NextResponse.json(
-      { error: "Failed to register" },
+      { error: `Registration failed: ${message}` },
       { status: 500 }
     );
   }

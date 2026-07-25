@@ -31,6 +31,7 @@ export default function CreatorSubmission() {
 
     try {
       // 1. Upload actual file to Supabase Storage Bucket
+      setStatus({ loading: true, message: 'Step 1/3: Uploading file...', error: false });
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${formData.category}/${fileName}`;
@@ -39,9 +40,8 @@ export default function CreatorSubmission() {
         .from('talennt-uploads')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) throw new Error(`File upload failed: ${uploadError.message}`);
 
-      // Get Public URL of the uploaded file
       const { data: publicUrlData } = supabase.storage
         .from('talennt-uploads')
         .getPublicUrl(filePath);
@@ -49,6 +49,7 @@ export default function CreatorSubmission() {
       const mediaUrl = publicUrlData.publicUrl;
 
       // 2. Register User & Send Unique ID SMS
+      setStatus({ loading: true, message: 'Step 2/3: Registering your account...', error: false });
       const regRes = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,6 +62,7 @@ export default function CreatorSubmission() {
       if (!regRes.ok) throw new Error(regData.error || 'Registration failed');
 
       // 3. Save submission record to Supabase database
+      setStatus({ loading: true, message: 'Step 3/3: Saving your submission...', error: false });
       const uploadRes = await fetch('/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,7 +80,7 @@ export default function CreatorSubmission() {
 
       setStatus({
         loading: false,
-        message: `Success! File uploaded, record created, and unique ID (${regData.unique_id}) sent via SMS.`,
+        message: `All done! Account created (ID: ${regData.contestantNumber}). Your submission is live on the dashboard.`,
         error: false,
       });
 
