@@ -17,11 +17,8 @@ export async function POST(req: Request) {
     // Keep the '+' sign, but remove spaces and dashes
     let cleanPhone = phone_number.replace(/[\s\-]/g, '').trim();
 
-    // Auto-fix local numbers if they start with '0' (e.g., 0712345678 -> +254712345678)
-    // Change '+254' to match your target country code if necessary
-    if (cleanPhone.startsWith('0')) {
-      cleanPhone = '+254' + cleanPhone.slice(1);
-    } else if (!cleanPhone.startsWith('+') && cleanPhone.length >= 9) {
+    // Auto-add '+' prefix if missing
+    if (!cleanPhone.startsWith('+') && cleanPhone.length >= 9) {
       cleanPhone = '+' + cleanPhone;
     }
 
@@ -65,24 +62,14 @@ export async function POST(req: Request) {
     }
 
     const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/login`;
-    const message = `Welcome to CreatorConnect, ${username}! Your contestant number is ${contestantNumber}. Use this to login at ${loginUrl}`;
-
-    // --- DETAILED LOGGING FOR DEBUGGING ---
-    console.log("----------------------------------------");
-    console.log("AT_DEBUG: Raw input phone_number ->", phone_number);
-    console.log("AT_DEBUG: Formatted cleanPhone ->", cleanPhone);
-    console.log("AT_DEBUG: Target recipient array ->", [cleanPhone]);
-    console.log("AT_DEBUG: Outbound message text ->", message);
-    console.log("----------------------------------------");
+    const message = `Hey ${username}! Welcome to TalentHotline. Your unique ID is ${contestantNumber}. Keep this ID safe — recruiters will use it to discover your talent. Login at ${loginUrl}`;
 
     let smsSent = false;
     try {
-      const smsResponse = await sendSMS([cleanPhone], message);
-      console.log("AT_DEBUG: Success response from AT ->", JSON.stringify(smsResponse));
+      await sendSMS([cleanPhone], message);
       smsSent = true;
     } catch (smsErr) {
-      console.error("SMS failed with full error object:", JSON.stringify(smsErr, null, 2));
-      console.error("SMS failed message:", smsErr instanceof Error ? smsErr.message : smsErr);
+      console.error("SMS failed:", smsErr instanceof Error ? smsErr.message : smsErr);
     }
 
     return NextResponse.json({

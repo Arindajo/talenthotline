@@ -37,9 +37,10 @@ export async function POST(
     }
 
     const user = talent.users as unknown as { phone_number: string; username: string };
-    const message = `Thank you for your submission, ${user.username}. Unfortunately, your talent was not selected at this time on CreatorConnect. Keep creating!`;
+    const message = `Hey ${user.username}, thank you for sharing your talent on TalentHotline. Unfortunately, it wasn't the right fit this time. Keep creating and try again!`;
 
-    await sendSMS([user.phone_number], message);
+    const atPhone = user.phone_number.startsWith('+') ? user.phone_number : '+' + user.phone_number;
+    await sendSMS([atPhone], message);
 
     return NextResponse.json({
       success: true,
