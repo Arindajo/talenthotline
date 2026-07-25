@@ -36,14 +36,14 @@ export default function CreatorSubmission() {
       const filePath = `${formData.category}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('talent-uploads')
+        .from('talennt-uploads')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       // Get Public URL of the uploaded file
       const { data: publicUrlData } = supabase.storage
-        .from('talent-uploads')
+        .from('talennt-uploads')
         .getPublicUrl(filePath);
 
       const mediaUrl = publicUrlData.publicUrl;
