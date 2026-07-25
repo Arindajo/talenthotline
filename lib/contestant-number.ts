@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 export async function generateContestantNumber(): Promise<string> {
   const { data, error } = await supabase
     .from("users")
-    .select("contestant_number")
+    .select("unique_id")
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
@@ -13,8 +13,8 @@ export async function generateContestantNumber(): Promise<string> {
   }
 
   let nextNum = 1;
-  if (data?.contestant_number) {
-    const lastNum = parseInt(data.contestant_number.replace("TH-", ""), 10);
+  if (data?.unique_id) {
+    const lastNum = parseInt(data.unique_id.replace("TH-", ""), 10);
     if (!isNaN(lastNum)) {
       nextNum = lastNum + 1;
     }
