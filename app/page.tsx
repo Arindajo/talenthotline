@@ -9,7 +9,7 @@ export default function LandingPage() {
        
 
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-          Unlocking Grassroots Talent, <span className="text-purple-400">Zero Internet Required.</span>
+          Unlocking Grassroots Talent, <span className="text-purple-400">Zero Hustle .</span>
         </h1>
 
         <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">

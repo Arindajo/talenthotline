@@ -14,7 +14,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const cleanPhone = phone_number.replace(/[\s\-+]/g, '');
+    // Keep the '+' sign, but remove spaces and dashes
+    const cleanPhone = phone_number.replace(/[\s\-]/g, '').trim();
 
     const { data: existing, error: checkError } = await supabase
       .from("users")
