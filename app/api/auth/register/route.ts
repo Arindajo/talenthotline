@@ -5,9 +5,9 @@ import { generateContestantNumber } from "@/lib/contestant-number";
 
 export async function POST(req: Request) {
   try {
-    const { phone, name } = await req.json();
+    const { username, phone_number } = await req.json();
 
-    if (!phone || !name) {
+    if (!phone_number || !username) {
       return NextResponse.json(
         { error: "Phone and name are required" },
         { status: 400 }
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const { data: existing } = await supabase
       .from("users")
       .select("id")
-      .eq("phone", phone)
+      .eq("phone_number", phone_number)
       .single();
 
     if (existing) {
@@ -32,12 +32,11 @@ export async function POST(req: Request) {
     const { data: user, error: insertError } = await supabase
       .from("users")
       .insert({
-        phone,
-        name,
-        contestant_number: contestantNumber,
-        role: "talent",
+        username,
+        phone_number,
+        unique_id: contestantNumber,
       })
-      .select("id, contestant_number")
+      .select("id, unique_id")
       .single();
 
     if (insertError) {
@@ -46,13 +45,13 @@ export async function POST(req: Request) {
     }
 
     const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/login`;
-    const message = `Welcome to CreatorConnect, ${name}! Your contestant number is ${contestantNumber}. Use this to login at ${loginUrl}`;
+    const message = `Welcome to CreatorConnect, ${username}! Your contestant number is ${contestantNumber}. Use this to login at ${loginUrl}`;
 
-    await sendSMS([phone], message);
+    await sendSMS([phone_number], message);
 
     return NextResponse.json({
       success: true,
-      contestantNumber: user.contestant_number,
+      contestantNumber: user.unique_id,
       message: "Account created. SMS sent with login credentials.",
     });
   } catch (err) {
