@@ -6,9 +6,7 @@ export default function LandingPage() {
     <main className="min-h-screen bg-gray-900 text-white flex flex-col justify-between">
       {/* Hero Section */}
       <div className="max-w-5xl mx-auto px-6 py-20 text-center flex-grow flex flex-col justify-center items-center">
-        <div className="inline-block bg-purple-900/50 text-purple-300 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-purple-700">
-          #BuildwithAT #WeloveNerds #WomenInTech
-        </div>
+       
 
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
           Unlocking Grassroots Talent, <span className="text-purple-400">Zero Internet Required.</span>
