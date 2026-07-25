@@ -11,7 +11,7 @@ export async function POST(
 
     const { data: talent, error: fetchError } = await supabase
       .from("talents")
-      .select("id, status, users (phone, name)")
+      .select("id, status, users (phone_number, username)")
       .eq("id", id)
       .single();
 
@@ -36,10 +36,10 @@ export async function POST(
       throw updateError;
     }
 
-    const user = talent.users as unknown as { phone: string; name: string };
-    const message = `Thank you for your submission, ${user.name}. Unfortunately, your talent was not selected at this time on CreatorConnect. Keep creating!`;
+    const user = talent.users as unknown as { phone_number: string; username: string };
+    const message = `Thank you for your submission, ${user.username}. Unfortunately, your talent was not selected at this time on CreatorConnect. Keep creating!`;
 
-    await sendSMS([user.phone], message);
+    await sendSMS([user.phone_number], message);
 
     return NextResponse.json({
       success: true,

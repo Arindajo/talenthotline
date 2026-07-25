@@ -14,9 +14,8 @@ export async function POST(req: Request) {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id, phone, name, contestant_number, role")
-      .eq("contestant_number", contestantNumber)
-      .eq("role", "talent")
+      .select("id, phone_number, username, unique_id")
+      .eq("unique_id", contestantNumber)
       .single();
 
     if (error || !user) {
@@ -30,10 +29,9 @@ export async function POST(req: Request) {
       success: true,
       user: {
         id: user.id,
-        phone: user.phone,
-        name: user.name,
-        contestantNumber: user.contestant_number,
-        role: user.role,
+        phone: user.phone_number,
+        name: user.username,
+        contestantNumber: user.unique_id,
       },
     });
   } catch (err) {
